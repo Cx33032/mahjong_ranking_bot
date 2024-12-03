@@ -3,7 +3,7 @@ A Discord Bot that allows players in the server to record the points and see the
 
 ## To-do List
 
-[x] Registration of the Users
-[x] Show the profiles of the Users
-[ ] Points record
-[ ] Process the points and check the leveling up
+- [x] Registration of the Users
+- [x] Show the profiles of the Users
+- [ ] Points record
+- [ ] Process the points and check the leveling up
