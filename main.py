@@ -33,11 +33,11 @@ async def profile(ctx):
 
         embed.add_field(name="Level", value=MAHJONG_LEVEL[get_player_level(ctx.author.id)], inline=True)
 
-        embed.add_field(name="Rate", value=get_player_rate(ctx.author.id), inline=True)
+        embed.add_field(name="Rate", value='{:.2f}'.format(get_player_rate(ctx.author.id)), inline=True)
 
         embed.add_field(name="Total Games", value=get_player_total_games(ctx.author.id), inline=True)
 
-        embed.add_field(name="Current AR", value=get_player_avg_rankings(ctx.author.id), inline=True)  
+        embed.add_field(name="Current AR", value='{:.2f}'.format(get_player_avg_rankings(ctx.author.id)), inline=True)  
 
         embed.add_field(name="No. of Games to Play", value= GAMES_TO_LEVEL_UP[get_player_level(ctx.author.id)] - get_player_current_games_number(ctx.author.id), inline=True)
 
@@ -83,31 +83,11 @@ async def record(ctx, player1, player1_points, player2, player2_points, player3,
         await ctx.send(player4 + " has not been registered yet")
         flag = False
 
-    if flag:
-        player1 = Ranking(player1_id, int(player1_points), get_player_rate(player1_id), get_player_total_games(player1_id), get_player_avg_rankings(player1_id), get_player_high_points(player1_id), get_player_avg_points(player1_id), get_player_level(player1_id), get_player_current_games_number(player1_id))
-        player2 = Ranking(player2_id, int(player2_points), get_player_rate(player2_id), get_player_total_games(player2_id), get_player_avg_rankings(player2_id), get_player_high_points(player2_id), get_player_avg_points(player2_id), get_player_level(player2_id), get_player_current_games_number(player2_id))
-        player3 = Ranking(player3_id, int(player3_points), get_player_rate(player3_id), get_player_total_games(player3_id), get_player_avg_rankings(player3_id), get_player_high_points(player3_id), get_player_avg_points(player3_id), get_player_level(player3_id), get_player_current_games_number(player3_id))
-        player4 = Ranking(player4_id, int(player4_points), get_player_rate(player4_id), get_player_total_games(player4_id), get_player_avg_rankings(player4_id), get_player_high_points(player4_id), get_player_avg_points(player4_id), get_player_level(player4_id), get_player_current_games_number(player4_id))
-        players = [player1, player2, player3, player4]
-        players.sort(key=lambda x: x.get_points(), reverse=True)
-
-        for i in range(4):
-            players[i].set_rank(i + 1)
-        
-        for player in players:
-            update_rank(player.get_id(), player.get_rank())
-            calculate_current_games_played(player)
-            calculate_avg_points(player)
-            calculat_avg_rank(player)
-            calculate_high_points(player)
-            calculate_level(player)
-            player.set_total_games()
-
-        assign_rate(players)
-
-        for player in players:
-            write_data(player.get_id(), player)
+    if not flag:
+        return
+    
+    set_players(player1_id, player1_points, player2_id, player2_points, player3_id, player3_points, player4_id, player4_points)
 
 
 
-bot.run("YOUR_API_TOKEN")  # Replace with your bot token
+bot.run("YOUR-TOKEN")  # Replace with your bot token
