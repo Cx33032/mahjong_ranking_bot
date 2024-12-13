@@ -3,7 +3,9 @@ from ranking import *
 from constants import *
 from typing import List
 import json
+import time
 
+# Assigns the rate to each player based on their average rate
 def assign_rate(players: List[Ranking]):
     avg_rate = 0.0
     for player in players:
@@ -18,10 +20,12 @@ def assign_rate(players: List[Ranking]):
 
         player.set_rate(player.get_rate() + delta_rate) 
 
+# Calculates the average points for a player
 def calculate_avg_points(player: Ranking):
     new_avg_points = (int)((player.get_avg_points() * player.get_total_games() + player.get_points()) / (player.get_total_games() + 1) / 100)
     player.set_avg_points(new_avg_points * 100)
 
+# Calculates the average rank for a player
 def calculat_avg_rank(player: Ranking):
     rank_json = json.loads(get_player_ranking(player.get_id()))
     avg_rank = 0.0
@@ -31,26 +35,37 @@ def calculat_avg_rank(player: Ranking):
     avg_rank = (float)((int)(avg_rank * 100) / 100)
     player.set_avg_ranking(avg_rank)
 
+# Calculates the highest points for a player
 def calculate_high_points(player: Ranking):
     if player.get_points() > player.get_high_points():
         player.set_high_points(player.get_points())
 
+# Calculates the current games played for a player
 def calculate_current_games_played(player: Ranking):
     if player.get_current_games_number() + 1 <= GAMES_TO_LEVEL_UP[player.get_level()]:
         player.set_current_games_number(player.get_current_games_number() + 1)
 
+# Calculates the level for a player
 def calculate_level(player: Ranking):
     if player.get_current_games_number() == GAMES_TO_LEVEL_UP[player.get_level()] and player.get_avg_ranking() <= AVG_RANKINGS[player.get_level()]:
         player.set_level(player.get_level() + 1)
         player.set_current_games_number(0)
         player.set_avg_ranking(0)
-        set_player_ranking(player.get_id(), RANK_ORIGINAL_DATA)
+        # set_player_ranking(player.get_id(), RANK_ORIGINAL_DATA)
 
+# Updates the rank for a player
 def update_rank(discord_id: str, rank: int):
     rank_json = json.loads(get_player_ranking(discord_id))
     rank_json['rank'].append(rank)
     set_player_ranking(discord_id, json.dumps(rank_json))
 
+# Updates the points for a player
+def update_points(discord_id: str, points: int):
+    point_json = json.loads(get_player_points(discord_id))
+    point_json['rank'].append(points)
+    set_player_points(discord_id, json.dumps(point_json))
+
+# Writes the data for a player
 def write_data(discord_id: str, player: Ranking):
     set_player_rate(discord_id, player.get_rate())
     set_player_avg_points(discord_id, player.get_avg_points())
@@ -60,6 +75,7 @@ def write_data(discord_id: str, player: Ranking):
     set_player_current_games_number(discord_id, player.get_current_games_number())
     set_player_level(discord_id, player.get_level())
 
+# Sets the players and calculates their data
 def set_players(player1_id, player1_points, player2_id, player2_points, player3_id, player3_points, player4_id, player4_points):
     player1 = Ranking(player1_id, int(player1_points), get_player_rate(player1_id), get_player_total_games(player1_id), get_player_avg_rankings(player1_id), get_player_high_points(player1_id), get_player_avg_points(player1_id), get_player_level(player1_id), get_player_current_games_number(player1_id))
     player2 = Ranking(player2_id, int(player2_points), get_player_rate(player2_id), get_player_total_games(player2_id), get_player_avg_rankings(player2_id), get_player_high_points(player2_id), get_player_avg_points(player2_id), get_player_level(player2_id), get_player_current_games_number(player2_id))
@@ -73,6 +89,7 @@ def set_players(player1_id, player1_points, player2_id, player2_points, player3_
     
     for player in players:
         update_rank(player.get_id(), player.get_rank())
+        update_points(player.get_id(), player.get_points())
         calculate_current_games_played(player)
         calculate_avg_points(player)
         calculat_avg_rank(player)
@@ -84,6 +101,22 @@ def set_players(player1_id, player1_points, player2_id, player2_points, player3_
 
     for player in players:
         write_data(player.get_id(), player)
+
+# Writes runtime logs
+def runtime_logs(invocator: str, invocator_id: str, message: str):
+    current_timestamp = time.time()
+    current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(current_timestamp))
+
+    with open('runtime.log', 'a') as f:
+        f.write(f'[{current_time}]  {invocator_id}   {invocator} \t\t {message}\n')
+
+# Writes runtime logs
+def runtime_logs(message: str):
+    current_timestamp = time.time()
+    current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(current_timestamp))
+
+    with open('runtime.log', 'a') as f:
+        f.write(f'[{current_time}]  {message}\n')
 
 if __name__ == '__main__':
     # player1_id = '1017241390582870056'

@@ -5,3 +5,5 @@ AVG_RANKINGS = [2.9, 2.8, 2.7, 2.7, 2.6, 2.6, 2.5, 2.5, 2.4, 2.3, 2.2, 2.1, 2.0,
 RATE_ORIGINAL = [30, 10, -10, -30]
 
 RANK_ORIGINAL_DATA = "{\"rank\": []}"
+
+TOKEN = "YOUR-TOKEN"

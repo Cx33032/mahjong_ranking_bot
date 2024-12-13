@@ -7,4 +7,4 @@ A Discord Bot that allows players in the server to record the points and see the
 - [x] Show the profiles of the Users
 - [x] Points record
 - [x] Process the points and check the leveling up
-- [ ] Doc comments
+- [x] Doc comments
